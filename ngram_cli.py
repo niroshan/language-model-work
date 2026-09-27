@@ -6,6 +6,7 @@
 # ====================================================================
 
 import random
+import math
 
 
 END_TOKEN = "<END>"
@@ -127,11 +128,13 @@ def build_ngram_model(tokens, n):
 # =========================
 # TASK 4: Weighted choice
 # =========================
-def weighted_choice(next_counts):
+def weighted_choice(next_counts, temperature):
     # print(next_counts)
+    for word_token, word_weight in next_counts.items():
+        word_weight = math.exp(math.log(word_weight) / temperature)
     total_count = sum(next_counts.values())
     # print(total_count)
-    choice = random.randrange(1, total_count+1)
+    choice = random.uniform(1, total_count+1)
     # print(choice)
     next_word = ""
     remainder = choice
@@ -142,7 +145,7 @@ def weighted_choice(next_counts):
             # print(word)
             next_word = word
             break
-    # print(next_word)
+    print(next_word)
     return next_word
     
     
@@ -201,7 +204,7 @@ def choose_start_state(model, seed_tokens, n):
 # =========================
 # TASK 6: Generate sentence
 # =========================
-def generate_sentence(model, n, seed_text, max_words = 25, end_token=END_TOKEN):
+def generate_sentence(model, n, seed_text, temperature, max_words = 25, end_token=END_TOKEN):
     # print(model)
     sentence = seed_text
     for word_count in range(n, max_words):
@@ -213,7 +216,7 @@ def generate_sentence(model, n, seed_text, max_words = 25, end_token=END_TOKEN):
         if seed_token != "":
             # print(seed_token)
             if seed_token in model:
-                next_word = weighted_choice(next_counts = model[seed_token])
+                next_word = weighted_choice(next_counts = model[seed_token], temperature = temperature)
                 sentence = sentence + " " + next_word
                 if next_word == end_token:
                     break
@@ -299,8 +302,9 @@ def main():
             mw = input("Max words (Enter for default 25): ").strip()
             if mw.isdigit():
                 max_words = int(mw)
+            temperature = float(input("Temperature: ").strip())
 
-            sentence = generate_sentence(model, n, seed, max_words)
+            sentence = generate_sentence(model, n, seed, temperature, max_words)
             if sentence != "":
                 print("\nGenerated:")
                 print(sentence)

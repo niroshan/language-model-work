@@ -22,7 +22,7 @@ The model counts how often these patterns appear in the training text, and the m
 
 ### 1. Tokenising the text <br>
 
-Fistly, the text is split into tokens (words and punctuation). <br>
+Firstly, the text is split into tokens (words and punctuation). <br>
 Example:
 > "The cat is lazy." <br>
 becomes: <br>
